@@ -8,7 +8,7 @@
 [![Qiskit Aer](https://img.shields.io/pypi/v/qiskit-aer?label=Qiskit%20Aer&color=6929C4)](https://pypi.org/project/qiskit-aer/)
 [![Status: Preprint](https://img.shields.io/badge/Status-Preprint-orange)](#)
 
-This repository simulates the BB84 protocol on a single-qubit circuit model. It runs the protocol twice: once on a clean channel, and once with a spy who measures every qubit and sends a fresh one on to the receiver. The error rate in the shared key (the QBER) is then compared across the two runs, and a key with too many errors is thrown away.
+This repository simulates the BB84 protocol on a single-qubit circuit model. It runs the protocol twice: once on a clean channel, and once with a spy who measures every qubit and sends a fresh one on to the receiver. The error rate in the shared key (the QBER) is then compared across the two runs, and a key with too many errors is thrown away. A Python-based simulation of the BB84 Quantum Key Distribution (QKD) protocol using IBM's Qiskit. Features a custom software pipeline evaluating secure state preparation, a measure-and-resend eavesdropping attack simulation (featuring Advik, Bhaskar, and Ekta), and quantitative analysis of the Quantum Bit Error Rate (QBER) to abort compromised keys
 
 The three people in the simulation:
 
