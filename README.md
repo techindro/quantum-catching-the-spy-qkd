@@ -1,6 +1,6 @@
-                                                         # Quantum Catching the Spy
+ # Quantum-catching-the-spy-qkd
 
-                                   ### Detecting an eavesdropper in BB84 quantum key distribution, simulated with Qiskit
+  ### Detecting an eavesdropper in BB84 quantum key distribution, simulated with Qiskit
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
