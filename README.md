@@ -1,12 +1,12 @@
- # Quantum-catching-the-spy-qkd
+# Quantum-catching-the-spy-qkd
 
-  ### Catching the Spy: Simulation and Eavesdropper Detection Analysis in BB84 Quantum Key Distribution Networks Using Qiskit
+### Catching the Spy: Simulation and Eavesdropper Detection Analysis in BB84 Quantum Key Distribution Networks Using Qiskit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![License](https://img.shields.io/github/license/techindro/quantum-catching-the-spy-qkd)](https://github.com/techindro/quantum-catching-the-spy-qkd/blob/main/LICENSE)
 [![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
-[![Qiskit](https://img.shields.io/pypi/v/qiskit?label=Qiskit&logo=qiskit&color=6929C4)](https://pypi.org/project/qiskit/)
+[![Qiskit](https://img.shields.io/pypi/v/qiskit?label=Qiskit&color=6929C4)](https://pypi.org/project/qiskit/)
 [![Qiskit Aer](https://img.shields.io/pypi/v/qiskit-aer?label=Qiskit%20Aer&color=6929C4)](https://pypi.org/project/qiskit-aer/)
-[![Status: Preprint](https://img.shields.io/badge/Status-Preprint-orange)](#)
+[![Last commit](https://img.shields.io/github/last-commit/techindro/quantum-catching-the-spy-qkd)](https://github.com/techindro/quantum-catching-the-spy-qkd/commits)
 
 This repository simulates the BB84 protocol on a single-qubit circuit model. It runs the protocol twice: once on a clean channel, and once with a spy who measures every qubit and sends a fresh one on to the receiver. The error rate in the shared key (the QBER) is then compared across the two runs, and a key with too many errors is thrown away. A Python-based simulation of the BB84 Quantum Key Distribution (QKD) protocol using IBM's Qiskit. Features a custom software pipeline evaluating secure state preparation, a measure-and-resend eavesdropping attack simulation (featuring Advik, Bhaskar, and Ekta), and quantitative analysis of the Quantum Bit Error Rate (QBER) to abort compromised keys
 
@@ -66,7 +66,7 @@ There are four steps:
 You need Python 3.10 or newer.
 
 ```bash
-git clone https://github.com/<techindro>/quantum-catching-the-spy-qkd.git
+git clone https://github.com/techindro/quantum-catching-the-spy-qkd.git
 cd quantum-catching-the-spy-qkd
 
 python -m venv venv
