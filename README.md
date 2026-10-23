@@ -66,7 +66,7 @@ There are four steps:
 You need Python 3.10 or newer.
 
 ```bash
-git clone https://github.com/<your-username>/quantum-catching-the-spy-qkd.git
+git clone https://github.com/<techindro>/quantum-catching-the-spy-qkd.git
 cd quantum-catching-the-spy-qkd
 
 python -m venv venv
