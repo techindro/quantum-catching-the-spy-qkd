@@ -1,191 +1,139 @@
-# quantum-catching-the-spy-qkd
-A Python-based simulation of the BB84 Quantum Key Distribution (QKD) protocol using IBM's Qiskit. Features a custom software pipeline evaluating secure state preparation, a measure-and-resend eavesdropping attack simulation (featuring Advik, Bhaskar, and Ekta), and quantitative analysis of the Quantum Bit Error Rate (QBER) to abort compromised keys
+# Quantum Catching the Spy
 
-# Quantum Catching the Spy: Eavesdropper Detection Analysis in Quantum Key Distribution Networks Using Qiskit
+### Detecting an eavesdropper in BB84 quantum key distribution, simulated with Qiskit
 
-[![arXiv](https://shields.io)](https://arxiv.org)
-[![License: MIT](https://shields.io)](https://opensource.org)
-[![Framework: Qiskit](https://shields.io)](https://qiskit.org)
-[![Python: 3.10+](https://shields.io)](https://python.org)
-[![Status: Preprint](https://shields.io)]
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Qiskit](https://img.shields.io/pypi/v/qiskit?label=Qiskit&logo=qiskit&color=6929C4)](https://pypi.org/project/qiskit/)
+[![Qiskit Aer](https://img.shields.io/pypi/v/qiskit-aer?label=Qiskit%20Aer&color=6929C4)](https://pypi.org/project/qiskit-aer/)
+[![Status: Preprint](https://img.shields.io/badge/Status-Preprint-orange)](#)
 
-A comprehensive, software-defined simulation pipeline evaluating secure state preparation, measure-and-resend eavesdropping vulnerabilities, and quantitative anomaly detection metrics under the BB84 protocol using IBM's Qiskit.
+This repository simulates the BB84 protocol on a single-qubit circuit model. It runs the protocol twice: once on a clean channel, and once with a spy who measures every qubit and sends a fresh one on to the receiver. The error rate in the shared key (the QBER) is then compared across the two runs, and a key with too many errors is thrown away.
 
----
+The three people in the simulation:
 
-## 💻 1. Installation & Environment Setup
+| Name | Role | What they do |
+|------|------|--------------|
+| Advik | Sender | Picks random bits and random bases, and encodes them as qubits |
+| Bhaskar | Receiver | Measures each incoming qubit in a randomly chosen basis |
+| Ekta | Spy | Measures each qubit on its way, then resends a new one |
 
-Configure the simulation environment locally by executing the following commands sequentially in your terminal:
+## Contents
+
+- [Background](#background)
+- [How the pieces fit together](#how-the-pieces-fit-together)
+- [Installation](#installation)
+- [Usage](#usage)
+- [What the simulation does](#what-the-simulation-does)
+- [Expected results](#expected-results)
+- [Limitations](#limitations)
+- [Future work](#future-work)
+- [References](#references)
+- [License](#license)
+
+## Background
+
+BB84 is a quantum key distribution protocol published by Charles Bennett and Gilles Brassard in 1984. Two people use it to agree on a secret key, even though the qubits travel over a channel that someone else might be watching.
+
+It works because of two facts about quantum states. First, an unknown state cannot be copied exactly (the no-cloning theorem), so a spy cannot keep a perfect copy and also pass the original along. Second, measuring a qubit in the wrong basis changes it, so the spy leaves traces behind.
+
+Qubits are sent in one of two bases, written `+` (computational) and `x` (diagonal). If the sender and receiver happen to choose the same basis, the receiver reads the right bit. If they choose differently, the result is a coin flip. Afterwards they announce their bases in public, without revealing the bits, and keep only the positions where the bases matched. What is left is called the sifted key.
+
+If a spy has been measuring, about one in four of the sifted bits will be wrong. Without a spy, in an ideal channel, none will be.
+
+## How the pieces fit together
+
+```mermaid
+flowchart LR
+    A["Advik (sender)"] -- "qubits" --> B["Bhaskar (receiver)"]
+    E["Ekta (spy)"] -. "measures and resends" .-> B
+    A <-- "public channel: bases only" --> B
+    B --> S["Sifted key"]
+    S --> Q{"QBER too high?"}
+    Q -- "yes" --> X["Throw the key away"]
+    Q -- "no" --> K["Keep the key"]
+```
+
+There are four steps:
+
+1. Advik makes random bits and random bases, and prepares one qubit per bit.
+2. Bhaskar measures each qubit in a random basis. In the attack run, Ekta measures first and resends.
+3. Advik and Bhaskar compare their bases over the public channel and keep the matching positions.
+4. They compare part of the sifted key, work out the QBER, and decide whether to keep or discard it.
+
+## Installation
+
+You need Python 3.10 or newer.
 
 ```bash
-# Clone the repository
-git clone https://github.com
+git clone https://github.com/<your-username>/quantum-catching-the-spy-qkd.git
 cd quantum-catching-the-spy-qkd
 
-# Create a clean virtual environment
 python -m venv venv
-source venv/bin/activate  # On Windows use: venv\Scripts\activate
+source venv/bin/activate        # on Windows: venv\Scripts\activate
 
-# Install required dependencies
 pip install qiskit qiskit-aer matplotlib numpy
 ```
 
-[Quantum Channel: Photon Stream Transfer Transmission]
-o o o o o o o o o o o o o o o o o o o o o o 🡪
-/                                             
-┌───────────────────────────┐                 ┌───────────────────────────┐
-│       Advik (Sender)      │                 │     Bhaskar (Receiver)    │
-│  ┌─────────────────────┐  │                 │  ┌─────────────────────┐  │
-│  │    Advik Encoder    │  │                 │  │ Measurement Backend │  │
-│  └─────────────────────┘  │                 │  └─────────────────────┘  │
-└───────────────────────────┘                 └───────────────────────────┘
-🡩        \                                   /        🡩
-│         \                                 /         │
-(Intrusion        🡪 o o o o o o o o o o o o o o o 🡨       (Basis Matching
-Detected)          [Classical Internet Channel]          Reconciliation)
-│           (Public Basis Reconciliation)             │
-│                                                     │
-└─────────────────────── 🡩 ───────────────────────────┘
-│
-(State Collapse via Intrusion)
-│
-┌───────────────────────────┐
-│    Ekta (Spy/Intruder)    │
-│    [Measure & Resend]     │
-└───────────────────────────┘
+## Usage
 
-### Technical Diagram Mapping Guide (For Draw.io / BioRender)
-To build a high-resolution, publication-ready schematic for your paper without copyright infringement, reconstruct the workflow manually using Draw.io or BioRender matching these structural guidelines:
-*   **Left Node (Advik):** Place a male user icon labeled **Advik (Key Sender)** enclosing the **Advik Encoder** system block. Draw an upward-curving dotted blue arrow representing the **Quantum Channel (Photon Stream Transfer Transmission)**, annotated with *"Sends Stream of Photons"*.
-*   **Right Node (Bhaskar):** Place a male user icon labeled **Bhaskar (Key Receiver)**. Connect the upper channel arriving from the top through a beam splitter component block, annotated with *"Uses Beam Splitter to Read Photons"*.
-*   **Classical Channel (Center Line):** Route a straight horizontal arrow representing the authenticated public classical internet channel between Advik and Bhaskar. Annotate the left-to-right axis as *"Informs Which Photons Were Read Correctly"* and the right-to-left axis as *"Tells Advik Which Polarizer Used"*.
-*   **Intruder Axis (Bottom Node):** Place a female user icon at the absolute bottom center labeled **Ekta (Eavesdropper)**. Route a thick vertical red arrow upwards to intercept the upper channel, overlaid with an eye symbol labeled *"Attempts to Intercept Key"* and *"Alters State of Photons"*. Extend a horizontal red line from this junction point terminating in a warning burst labeled *"Detects Eavesdropping"*.
+Run the simulation script from the repository root:
 
----
+```bash
+python qkd_simulation.py
+```
 
-## 📜 3. Complete Simulation Source Code
+It prints the bits, the bases, both sifted keys and the QBER for each run. It also saves two files:
 
-This repository contains the complete production pipeline written in Python using the Qiskit framework. Save this code as `qkd_simulation.py`:
+- `qber_comparison_plot.png`, a bar chart of the QBER with and without Ekta
+- `quantum_circuit_pipeline.png`, the circuit used for the intercepted run
 
-```python
-import random
-import matplotlib.pyplot as plt
-from qiskit import QuantumCircuit
-from qiskit_aer import AerSimulator
+## What the simulation does
 
-num_bits = 20
-qber_without_ekta = 0
-qber_with_ekta = 0
+**Clean channel.** Advik flips the qubit with an X gate if his bit is 1, and applies an H gate if he chose the `x` basis. Bhaskar applies an H gate if he chose `x`, then measures. When their bases agree, he gets Advik's bit.
 
-print("--- BB84 क्वांटम की डिस्ट्रीब्यूशन सिमुलेशन शुरू ---")
-print(f"अद्विक (Sender) {num_bits} क्वांटम बिट्स तैयार कर रहा है...\n")
+**With Ekta.** Ekta measures in her own random basis, then prepares a new qubit from her result in that same basis. When her basis differs from Advik's, the new qubit no longer carries his bit, so Bhaskar's answer is right only half the time.
 
-advik_bits = [random.randint(0, 1) for _ in range(num_bits)]
-advik_bases = [random.choice(['+', 'x']) for _ in range(num_bits)]
-bhaskar_bases = [random.choice(['+', 'x']) for _ in range(num_bits)]
-ekta_bases = [random.choice(['+', 'x']) for _ in range(num_bits)]
+**QBER.** Only positions where Advik's and Bhaskar's bases matched are used:
 
-# CASE A: Secure Channel
-circuits_no_ekta = []
-for i in range(num_bits):
-    qc = QuantumCircuit(1, 1)
-    if advik_bits[i] == 1:
-        qc.x(0)
-    if advik_bases[i] == 'x':
-        qc.h(0)
-    if bhaskar_bases[i] == 'x':
-        qc.h(0)
-    qc.measure(0, 0)
-    circuits_no_ekta.append(qc)
+```
+QBER = wrong bits in the sifted key / length of the sifted key
+```
 
-sim = AerSimulator()
-bhaskar_bits_no_ekta = []
-for qc in circuits_no_ekta:
-    result = sim.run(qc, shots=1, memory=True).result()
-    bhaskar_bits_no_ekta.append(int(result.get_memory()))
+Research on BB84 puts the limit for safely extracting a key at roughly 11% error. Above that, the key is discarded.
 
-# CASE B: Intercepted Channel (Measure-and-Resend)
-circuits_with_ekta = []
-for i in range(num_bits):
-    qc = QuantumCircuit(1, 1)
-    if advik_bits[i] == 1:
-        qc.x(0)
-    if advik_bases[i] == 'x':
-        qc.h(0)
-    if ekta_bases[i] == 'x':
-        qc.h(0)
-    qc.measure(0, 0)
-    if ekta_bases[i] == 'x':
-        qc.h(0)
-    if bhaskar_bases[i] == 'x':
-        qc.h(0)
-    qc.measure(0, 0)
-    circuits_with_ekta.append(qc)
+## Expected results
 
-bhaskar_bits_with_ekta = []
-for qc in circuits_with_ekta:
-    result = sim.run(qc, shots=1, memory=True).result()
-    bhaskar_bits_with_ekta.append(int(result.get_memory()))
+| Run | Expected QBER |
+|-----|---------------|
+| No spy | 0% |
+| With Ekta | about 25% |
 
-# Classical Post-Processing (Key Sifting using Wikipedia Terminology)
-# Extracting the matching sifted key from conjugate states and computational bases
-advik_sifted_key = []
-bhaskar_sifted_key_no_ekta = []
-bhaskar_sifted_key_with_ekta = []
+> With only 20 qubits the sifted key is about 10 bits long, so the measured numbers jump around a lot from run to run. Use a few hundred qubits or more to get close to the figures above.
 
-for i in range(num_bits):
-    if advik_bases[i] == bhaskar_bases[i]:
-        advik_sifted_key.append(advik_bits[i])
-        bhaskar_sifted_key_no_ekta.append(bhaskar_bits_no_ekta[i])
-        bhaskar_sifted_key_with_ekta.append(bhaskar_bits_with_ekta[i])
+## Limitations
 
-errors_no_ekta = sum(1 for a, b in zip(advik_sifted_key, bhaskar_sifted_key_no_ekta) if a != b)
-errors_with_ekta = sum(1 for a, b in zip(advik_sifted_key, bhaskar_sifted_key_with_ekta) if a != b)
+- The channel is perfect. There is no photon loss, detector noise or thermal noise.
+- Only the measure-and-resend attack is simulated. Other attacks are not covered.
+- The public channel is assumed to be authenticated.
+- Error correction and privacy amplification are not implemented, so the sifted key is not yet a finished secret key.
+- Very short keys give a noisy QBER estimate.
 
-qber_no_ekta = (errors_no_ekta / len(advik_sifted_key)) * 100 if advik_sifted_key else 0
-qber_with_ekta = (errors_with_ekta / len(advik_sifted_key)) * 100 if advik_sifted_key else 0
+## Future work
 
-print("--- सिमुलेशन रिजल्ट डेटा टेबल ---")
-print(f"अद्विक के ओरिजिनल बिट्स: {advik_bits}")
-print(f"अद्विक के बेसिस:        {advik_bases}")
-print(f"भास्कर के बेसिस:        {bhaskar_bases}")
-print(f"एकता के बेसिस:        {ekta_bases}")
-print(f"\nअद्विक की फाइनल सिफ्टेड चाबी:          {advik_sifted_key}")
-print(f"भास्कर की चाबी (बिना एकता के):         {bhaskar_sifted_key_no_ekta}")
-print(f"भास्कर की चाबी (जब एकता ने ताका):       {bhaskar_sifted_key_with_ekta}")
-print(f"\n[परिणाम 1] बिना एकता के क्वांटम एरर रेट (QBER): {qber_no_ekta:.2f}%")
-print(f"[परिणाम 2] जब एकता ने बीच में ताका, तो एरर रेट (QBER): {qber_with_ekta:.2f}%")
+- Add channel noise and see how the abort threshold moves.
+- Add error correction, for example the Cascade protocol.
+- Add privacy amplification.
+- Try an entanglement-based version such as E91.
 
-# Generate Performance Visuals
-categories = ['Secure Channel\n(No Ekta)', 'Intercepted Channel\n(With Ekta)']
-error_rates = [qber_no_ekta, qber_with_ekta]
-plt.figure(figsize=(7, 5))
-bars = plt.bar(categories, error_rates, color=['#4CAF50', '#F44336'], width=0.4)
-plt.ylabel('Quantum Bit Error Rate (QBER) %')
-plt.title('Eavesdropper Detection Analysis using BB84 Protocol')
-plt.ylim(0, 40)
-for bar in bars:
-    yval = bar.get_height()
-    plt.text(bar.get_x() + bar.get_width()/2.0, yval + 1, f"{yval:.1f}%", ha='center', va='bottom', fontweight='bold')
-plt.tight_layout()
-plt.savefig('qber_comparison_plot.png')
+## References
 
-circuits_with_ekta[-1].draw(output='mpl', filename='quantum_circuit_pipeline.png')
+1. C. H. Bennett and G. Brassard, "Quantum cryptography: Public key distribution and coin tossing," *Proceedings of the IEEE International Conference on Computers, Systems and Signal Processing*, Bangalore, 1984, pp. 175-179.
+2. W. K. Wootters and W. H. Zurek, "A single quantum cannot be cloned," *Nature* 299, 802-803 (1982).
+3. P. W. Shor and J. Preskill, "Simple proof of security of the BB84 quantum key distribution protocol," *Physical Review Letters* 85, 441 (2000).
+4. Wikipedia articles used for background reading: [BB84](https://en.wikipedia.org/wiki/BB84), [Quantum key distribution](https://en.wikipedia.org/wiki/Quantum_key_distribution), [No-cloning theorem](https://en.wikipedia.org/wiki/No-cloning_theorem).
+5. [Qiskit documentation](https://docs.quantum.ibm.com/)
 
-🔮 5. Future Work & Extensions
+## License
 
-• Channel Decoupling: Integrating simulated Gaussian thermal channel noise to analyze shifts in thresholds.
-• Error Correction Cascades: Deploying classical reconciliation algorithms (e.g., Cascade protocol) to process noisy channel keys.
-• Entanglement Models: Scaling the current framework into multi-party entanglement-based architectures utilizing the E91 protocol.
-
-📜 6. License & Citations
-
-This repository is licensed under the MIT License. Feel free to leverage the pipeline configurations for subsequent academic preprint drafts or structural optimization models.
-This is for informational purposes only. For medical advice or diagnosis, consult a professional. AI responses may include mistakes.
-
----
-
-## 🛠️ 2. System Architecture & Workflow
-
-The network architecture deploys a dual-channel configuration, processing communication across nodes through four explicit execution phases:
-
+Released under the [MIT License](https://opensource.org/licenses/MIT).
