@@ -2,10 +2,6 @@
 
 ### Catching the Spy: Simulation and Eavesdropper Detection Analysis in BB84 Quantum Key Distribution Networks Using Qiskit
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python 3.10+](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
-[![Qiskit](https://img.shields.io/badge/Built%20with-Qiskit-6929C4.svg)](https://qiskit.org/)
-
 This repository simulates the BB84 protocol on a single-qubit circuit model. It runs the protocol twice: once on a clean channel, and once with a spy who measures every qubit and sends a fresh one on to the receiver. The error rate in the shared key (the QBER) is then compared across the two runs, and a key with too many errors is thrown away. A Python-based simulation of the BB84 Quantum Key Distribution (QKD) protocol using IBM's Qiskit. Features a custom software pipeline evaluating secure state preparation, a measure-and-resend eavesdropping attack simulation (featuring Advik, Bhaskar, and Ekta), and quantitative analysis of the Quantum Bit Error Rate (QBER) to abort compromised keys
 
 The three people in the simulation:
