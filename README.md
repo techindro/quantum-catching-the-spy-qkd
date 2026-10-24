@@ -15,6 +15,7 @@ The three people in the simulation:
 ## Contents
 
 - [Live demo](#live-demo)
+- [Paper](#paper)
 - [Background](#background)
 - [How the pieces fit together](#how-the-pieces-fit-together)
 - [Installation](#installation)
@@ -31,9 +32,17 @@ The three people in the simulation:
 
 You can try the simulation in the browser, without installing anything, on Hugging Face Spaces:
 
-[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-sm.svg)](https://huggingface.co/spaces/techindro/quantum-catching-the-spy-qkd)
+<https://huggingface.co/spaces/techindro/quantum-catching-the-spy-qkd>
 
-Link: <https://huggingface.co/spaces/techindro/quantum-catching-the-spy-qkd>
+![Screenshot of the Hugging Face Space: BB84 QKD simulator](figures/hf_space_demo.png)
+
+## Paper
+
+The full paper that describes this work is included in the repository:
+
+**[Catching the Spy: Eavesdropper Detection Analysis in Quantum Key Distribution Networks Using Qiskit](paper/QKD_BB84_Research_Paper.pdf)** (PDF)
+
+The MIT License of this repository covers the code. The text and figures of the paper are not covered by it.
 
 ## Background
 
@@ -49,13 +58,9 @@ If a spy has been measuring, about one in four of the sifted bits will be wrong.
 
 ```mermaid
 flowchart LR
-    A["Advik (sender)"] -- "qubits" --> B["Bhaskar (receiver)"]
-    E["Ekta (spy)"] -. "measures and resends" .-> B
-    A <-- "public channel: bases only" --> B
-    B --> S["Sifted key"]
-    S --> Q{"QBER too high?"}
-    Q -- "yes" --> X["Throw the key away"]
-    Q -- "no" --> K["Keep the key"]
+    A["Advik<br/>sends qubits"] --> E["Ekta<br/>spy, may intercept"] --> B["Bhaskar<br/>measures qubits"] --> S["Keep positions<br/>with matching bases"] --> Q{"QBER above<br/>15%?"}
+    Q -- "yes" --> D["Discard key"]
+    Q -- "no" --> K["Keep key"]
 ```
 
 There are four steps:
@@ -93,13 +98,21 @@ It prints the mean QBER, the standard deviation and the abort rate for every num
 - `monte_carlo_runs.csv`, one row per session (secure and attacked channel)
 - `table_x_summary.csv`, the summary per n used in Table X of the paper
 
+To run the small test file (secure channel gives 0% QBER, attack gives about 25%):
+
+```bash
+python tests/test_bb84.py
+```
+
+The exact library versions used in the paper are listed in `requirements-paper.txt`.
+
 ## Paper figures
 
 The notebook [`BB84_paper_figures.ipynb`](BB84_paper_figures.ipynb) regenerates all six figures of the paper (Figs. 1 to 6) and the Monte Carlo tables. Figs. 1 and 5 are analytical curves, Figs. 3 and 4 come from the Qiskit simulation, Fig. 2 is the workflow diagram, and Fig. 6 plots the values reported in the paper.
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/techindro/quantum-catching-the-spy-qkd/blob/main/BB84_paper_figures.ipynb)
+[Open the notebook in Google Colab](https://colab.research.google.com/github/techindro/quantum-catching-the-spy-qkd/blob/main/BB84_paper_figures.ipynb)
 
-To run it, click the badge above, then choose `Runtime` > `Run all`. The figures are saved as PNG files in a `figures/` folder. The full Monte Carlo run takes several minutes; set `QUICK_TEST = True` in the settings cell for a fast check.
+To run it, click the link above, then choose `Runtime` > `Run all`. The figures are saved as PNG files in a `figures/` folder. The full Monte Carlo run takes several minutes; set `QUICK_TEST = True` in the settings cell for a fast check.
 
 ### Figures
 
