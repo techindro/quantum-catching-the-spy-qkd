@@ -18,16 +18,26 @@ The three people in the simulation:
 
 ## Contents
 
+- [Live demo](#live-demo)
 - [Background](#background)
 - [How the pieces fit together](#how-the-pieces-fit-together)
 - [Installation](#installation)
 - [Usage](#usage)
+- [Paper figures: `BB84_paper_figures.ipynb`](#paper-figures)
 - [What the simulation does](#what-the-simulation-does)
 - [Expected results](#expected-results)
 - [Limitations](#limitations)
 - [Future work](#future-work)
 - [References](#references)
 - [License](#license)
+
+## Live demo
+
+You can try the simulation in the browser, without installing anything, on Hugging Face Spaces:
+
+[![Open in Spaces](https://huggingface.co/datasets/huggingface/badges/resolve/main/open-in-hf-spaces-sm.svg)](https://huggingface.co/spaces/techindro/quantum-catching-the-spy-qkd)
+
+Link: <https://huggingface.co/spaces/techindro/quantum-catching-the-spy-qkd>
 
 ## Background
 
@@ -75,16 +85,39 @@ pip install qiskit qiskit-aer matplotlib numpy
 
 ## Usage
 
-Run the simulation script from the repository root:
+Run the simulation from the repository root:
 
 ```bash
-python qkd_simulation.py
+python bb84_sim.py            # full Monte Carlo of the paper (takes several minutes)
+python bb84_sim.py --quick    # a few runs per n, only to check that the setup works
 ```
 
-It prints the bits, the bases, both sifted keys and the QBER for each run. It also saves two files:
+It prints the mean QBER, the standard deviation and the abort rate for every number of transmitted qubits, and writes two CSV files to a `results/` folder:
 
-- `qber_comparison_plot.png`, a bar chart of the QBER with and without Ekta
-- `quantum_circuit_pipeline.png`, the circuit used for the intercepted run
+- `monte_carlo_runs.csv`, one row per session (secure and attacked channel)
+- `table_x_summary.csv`, the summary per n used in Table X of the paper
+
+## Paper figures
+
+The notebook [`BB84_paper_figures.ipynb`](BB84_paper_figures.ipynb) regenerates all six figures of the paper (Figs. 1 to 6) and the Monte Carlo tables. Figs. 1 and 5 are analytical curves, Figs. 3 and 4 come from the Qiskit simulation, Fig. 2 is the workflow diagram, and Fig. 6 plots the values reported in the paper.
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/techindro/quantum-catching-the-spy-qkd/blob/main/BB84_paper_figures.ipynb)
+
+To run it, click the badge above, then choose `Runtime` > `Run all`. The figures are saved as PNG files in a `figures/` folder. The full Monte Carlo run takes several minutes; set `QUICK_TEST = True` in the settings cell for a fast check.
+
+### Figures
+
+![Fig. 1: expected QBER for partial interception](figures/fig1_partial_interception.png)
+
+![Fig. 2: workflow of the simulated BB84 network](figures/fig2_workflow.png)
+
+![Fig. 3: QBER for 10 to 50 qubits](figures/fig3_qber_single_run.png)
+
+![Fig. 4: Monte Carlo QBER](figures/fig4_monte_carlo.png)
+
+![Fig. 5: probability that an attack is not detected](figures/fig5_failure_probability.png)
+
+![Fig. 6: error rate by party](figures/fig6_party_error_rates.png)
 
 ## What the simulation does
 
