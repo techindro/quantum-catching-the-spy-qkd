@@ -384,4 +384,6 @@ try:
     from google.colab import files
     files.download("paper_figures.zip")
 except ImportError:
+
+# !pip install -q qiskit qiskit-aer matplotlib numpy scipy pandas
     print(sorted(os.listdir(OUT_DIR)))
