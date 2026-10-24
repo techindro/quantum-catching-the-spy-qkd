@@ -1,4 +1,3 @@
-# Google Colab की स्क्रीन पर लाइव ग्राफ़ डिस्प्ले करने के लिए आवश्यक मैजिक कमांड
 %matplotlib inline
 
 import matplotlib.pyplot as plt
