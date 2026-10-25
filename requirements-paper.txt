@@ -1,0 +1,7 @@
+# Exact versions used in the paper (Python 3.12.3).
+qiskit==2.6.1
+qiskit-aer==0.18.0
+matplotlib
+numpy
+scipy
+pandas

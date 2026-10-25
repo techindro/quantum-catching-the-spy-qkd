@@ -1,7 +1,8 @@
 qiskit>=1.0.0
 qiskit-aer>=0.13.0
+openai>=1.30.0
+python-dotenv>=1.0.0
 matplotlib
 numpy
 gradio
 pylatexenc
-spaces

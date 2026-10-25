@@ -22,7 +22,8 @@
 
 # %% ===================== CELL 1 (code) =====================
 # Install the libraries (about one minute on Colab).
-!pip install -q qiskit qiskit-aer matplotlib numpy scipy pandas
+# If running in Colab, uncomment the next line to install dependencies:
+# !pip install -q qiskit qiskit-aer matplotlib numpy scipy pandas
 
 # The paper used Python 3.12.3, Qiskit 2.6.1 and Qiskit Aer 0.18.0.
 # To use exactly those versions, run this instead:
@@ -381,9 +382,7 @@ plt.show()
 import shutil
 shutil.make_archive("paper_figures", "zip", OUT_DIR)
 try:
-    from google.colab import files
+    from google.colab import files  # type: ignore
     files.download("paper_figures.zip")
 except ImportError:
-
-# !pip install -q qiskit qiskit-aer matplotlib numpy scipy pandas
     print(sorted(os.listdir(OUT_DIR)))
