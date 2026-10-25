@@ -16,10 +16,13 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Nebius AI Cloud credentials (OpenAI-compatible endpoint)
 # ---------------------------------------------------------------------------
-NEBIUS_API_KEY: str = os.environ.get("NEBIUS_API_KEY", "")
-NEBIUS_BASE_URL: str = os.environ.get(
-    "NEBIUS_BASE_URL", "https://api.nebius.ai/v1"
-)
+def _sanitize_str(val: str, default: str = "") -> str:
+    s = (val or default).strip()
+    return "".join(c for c in s if c.isprintable() and not c.isspace())
+
+NEBIUS_API_KEY: str = _sanitize_str(os.environ.get("NEBIUS_API_KEY", ""))
+_raw_url = os.environ.get("NEBIUS_BASE_URL", "https://api.nebius.ai/v1")
+NEBIUS_BASE_URL: str = _sanitize_str(_raw_url, "https://api.nebius.ai/v1").rstrip("/")
 
 if not NEBIUS_API_KEY:
     logger.warning(
@@ -30,8 +33,8 @@ if not NEBIUS_API_KEY:
 # ---------------------------------------------------------------------------
 # NVIDIA model identifier (Nemotron family)
 # ---------------------------------------------------------------------------
-MODEL_ID: str = os.environ.get(
-    "MODEL_ID", "nvidia/nemotron-3.5-lightning-30b-a3b"
+MODEL_ID: str = _sanitize_str(
+    os.environ.get("MODEL_ID", "nvidia/nemotron-3.5-lightning-30b-a3b")
 )
 
 # ---------------------------------------------------------------------------

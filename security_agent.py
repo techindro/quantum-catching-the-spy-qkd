@@ -147,46 +147,31 @@ def _extract_json(raw_text: str) -> Dict[str, Any]:
     return payload
 
 
-async def analyze_channel_security(
+def analyze_channel_security_sync(
     measured_qber: float,
     sifted_key_length: int,
 ) -> Dict[str, Any]:
-    """Send QBER telemetry to the Nemotron security agent and return a verdict.
+    """Synchronous channel security analysis for UI dashboards (avoids event loop conflicts)."""
+    clean_key = (NEBIUS_API_KEY or "").strip()
+    clean_url = "".join(c for c in (NEBIUS_BASE_URL or "").strip() if c.isprintable() and not c.isspace()).rstrip("/")
+    clean_model = (MODEL_ID or "").strip()
 
-    Parameters
-    ----------
-    measured_qber : float
-        The Quantum Bit Error Rate measured on the sifted key (in percent).
-    sifted_key_length : int
-        Number of bits in the sifted key after basis reconciliation.
-
-    Returns
-    -------
-    dict
-        A structured verdict containing 'status', 'attack_probability',
-        'reasoning', and 'mitigation_action'.  A deterministic fallback
-        is returned if the cloud agent is unreachable.
-    """
-
-    if not NEBIUS_API_KEY:
+    if not clean_key:
         return _fallback_verdict("NEBIUS_API_KEY environment variable is not set")
 
-    client = openai.AsyncOpenAI(
-        api_key=NEBIUS_API_KEY,
-        base_url=NEBIUS_BASE_URL,
-        timeout=API_TIMEOUT_SECONDS,
-    )
-
     try:
-        response = await client.chat.completions.create(
-            model=MODEL_ID,
+        client = openai.OpenAI(
+            api_key=clean_key,
+            base_url=clean_url,
+            timeout=API_TIMEOUT_SECONDS,
+        )
+        response = client.chat.completions.create(
+            model=clean_model,
             messages=[
                 {"role": "system", "content": _SYSTEM_PROMPT},
                 {
                     "role": "user",
-                    "content": _build_user_message(
-                        measured_qber, sifted_key_length
-                    ),
+                    "content": _build_user_message(measured_qber, sifted_key_length),
                 },
             ],
             max_tokens=API_MAX_TOKENS,
@@ -209,23 +194,76 @@ async def analyze_channel_security(
 
     except openai.APIConnectionError as exc:
         return _fallback_verdict(f"API connection failure: {exc}")
-
     except openai.RateLimitError as exc:
         return _fallback_verdict(f"Rate limit exceeded: {exc}")
-
     except openai.APITimeoutError as exc:
         return _fallback_verdict(f"API request timed out: {exc}")
-
     except openai.APIStatusError as exc:
-        return _fallback_verdict(
-            f"API returned error status {exc.status_code}: {exc.message}"
-        )
-
+        return _fallback_verdict(f"API returned error status {exc.status_code}: {exc.message}")
     except (json.JSONDecodeError, ValueError) as exc:
         return _fallback_verdict(f"Failed to parse model output: {exc}")
-
     except Exception as exc:
         return _fallback_verdict(f"Unexpected error: {type(exc).__name__}: {exc}")
 
+
+async def analyze_channel_security(
+    measured_qber: float,
+    sifted_key_length: int,
+) -> Dict[str, Any]:
+    """Send QBER telemetry to the Nemotron security agent and return a verdict (async)."""
+    clean_key = (NEBIUS_API_KEY or "").strip()
+    clean_url = "".join(c for c in (NEBIUS_BASE_URL or "").strip() if c.isprintable() and not c.isspace()).rstrip("/")
+    clean_model = (MODEL_ID or "").strip()
+
+    if not clean_key:
+        return _fallback_verdict("NEBIUS_API_KEY environment variable is not set")
+
+    client = None
+    try:
+        client = openai.AsyncOpenAI(
+            api_key=clean_key,
+            base_url=clean_url,
+            timeout=API_TIMEOUT_SECONDS,
+        )
+        response = await client.chat.completions.create(
+            model=clean_model,
+            messages=[
+                {"role": "system", "content": _SYSTEM_PROMPT},
+                {
+                    "role": "user",
+                    "content": _build_user_message(measured_qber, sifted_key_length),
+                },
+            ],
+            max_tokens=API_MAX_TOKENS,
+            temperature=API_TEMPERATURE,
+        )
+        msg = response.choices[0].message
+        raw_content = msg.content or getattr(msg, "reasoning_content", "") or ""
+        if not raw_content:
+            raise ValueError("Model returned empty content payload")
+        logger.debug("Raw model response: %s", raw_content)
+
+        verdict = _extract_json(raw_content)
+        logger.info(
+            "Security agent verdict: status=%s, probability=%.2f, action=%s",
+            verdict["status"],
+            verdict["attack_probability"],
+            verdict["mitigation_action"],
+        )
+        return verdict
+
+    except openai.APIConnectionError as exc:
+        return _fallback_verdict(f"API connection failure: {exc}")
+    except openai.RateLimitError as exc:
+        return _fallback_verdict(f"Rate limit exceeded: {exc}")
+    except openai.APITimeoutError as exc:
+        return _fallback_verdict(f"API request timed out: {exc}")
+    except openai.APIStatusError as exc:
+        return _fallback_verdict(f"API returned error status {exc.status_code}: {exc.message}")
+    except (json.JSONDecodeError, ValueError) as exc:
+        return _fallback_verdict(f"Failed to parse model output: {exc}")
+    except Exception as exc:
+        return _fallback_verdict(f"Unexpected error: {type(exc).__name__}: {exc}")
     finally:
-        await client.close()
+        if client is not None:
+            await client.close()

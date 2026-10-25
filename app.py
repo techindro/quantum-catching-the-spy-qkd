@@ -9,7 +9,7 @@ from qiskit import QuantumCircuit
 from qiskit_aer import AerSimulator
 
 from config import QBER_ABORT_THRESHOLD
-from security_agent import analyze_channel_security
+from security_agent import analyze_channel_security_sync
 
 try:
     import spaces  # type: ignore
@@ -191,7 +191,6 @@ def _get_initial_sentinel_card() -> str:
 """
 
 
-@spaces.GPU
 def run_quantum_pipeline(num_bits):
     num_bits = int(num_bits)
 
@@ -202,11 +201,9 @@ def run_quantum_pipeline(num_bits):
     cycle1 = _simulate_circuit_run(num_bits, mode="attacked")
 
     # 3. Query Cloud AI Security Agent (NVIDIA Nemotron)
-    verdict = asyncio.run(
-        analyze_channel_security(
-            measured_qber=cycle1["qber"],
-            sifted_key_length=cycle1["sifted_length"],
-        )
+    verdict = analyze_channel_security_sync(
+        measured_qber=cycle1["qber"],
+        sifted_key_length=cycle1["sifted_length"],
     )
 
     status = verdict.get("status", "UNKNOWN_POTENTIAL_ATTACK")
