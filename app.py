@@ -473,5 +473,5 @@ with gr.Blocks(title="Quantum Catching the Spy: BB84 QKD Simulator") as demo:
         outputs=[output_text, output_plot, agent_output],
     )
 
-if __name__ == "__main__":
-    demo.launch()
+demo.launch(ssr_mode=False)
+
