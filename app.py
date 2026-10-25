@@ -191,6 +191,7 @@ def _get_initial_sentinel_card() -> str:
 """
 
 
+@spaces.GPU
 def run_quantum_pipeline(num_bits):
     num_bits = int(num_bits)
 
