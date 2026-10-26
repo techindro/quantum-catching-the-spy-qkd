@@ -1,8 +1,9 @@
+
 # Quantum-catching-the-spy-qkd
 
 ### Catching the Spy: Eavesdropper Detection and Autonomous Self-Healing in BB84 Quantum Key Distribution Networks Using IBM Qiskit and NVIDIA AI Sentinel
 
-This repository simulates the BB84 protocol on a single-qubit circuit model. It features an autonomous closed-loop security architecture: an active eavesdropping attack by a spy ("Ekta") is simulated via IBM Qiskit, detected through real-time Quantum Bit Error Rate (QBER) telemetry, evaluated by NVIDIA Llama-3.1-Nemotron-70B on the cloud, and autonomously neutralized through dynamic basis rotation and decoy state isolation.
+This repository simulates the BB84 protocol on a single-qubit circuit model. It features an autonomous closed-loop security architecture: an active eavesdropping attack by a spy ("Ekta") is simulated via IBM Qiskit, detected through real-time Quantum Bit Error Rate (QBER) telemetry,evaluated by NVIDIA Llama-3.1-Nemotron-70B on the cloud, and autonomously neutralized through dynamic basis rotation and decoy state isolation.
 
 The four entities in the network:
 
@@ -13,7 +14,7 @@ The four entities in the network:
 | Ekta | The Spy | Intercepts qubits in transit via a Measure-and-Resend attack |
 | NVIDIA Nemotron | AI Sentinel | Evaluates real-time telemetry, attributes threats, and triggers autonomous channel healing |
 
-## Contents
+## Contents 
 
 - [Live demo](#live-demo)
 - [Paper](#paper)
