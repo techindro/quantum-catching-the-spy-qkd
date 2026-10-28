@@ -1,4 +1,3 @@
-
 # Quantum-catching-the-spy-qkd
 
 ### Catching the Spy: Eavesdropper Detection and Autonomous Self-Healing in BB84 Quantum Key Distribution Networks Using IBM Qiskit and NVIDIA AI Sentinel
