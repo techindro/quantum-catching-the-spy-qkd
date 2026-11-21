@@ -39,8 +39,6 @@ You can try the simulation in the browser, without installing anything, on Huggi
 
 ![Screenshot of the Hugging Face Space: BB84 QKD simulator](figures/hf_space_demo.png)
 
-[![DOI](https://shields.io)](https://zenodo.org)
-
 ## Paper
 
 The full paper that describes this work is included in the repository:
@@ -222,6 +220,19 @@ python app.py
 - Add privacy amplification.
 - Try an entanglement-based version such as E91.
 
+### BibTeX
+```bibtex
+@techreport{patel2026catching,
+  author       = {Patel, Shubham},
+  title        = {{Catching the Spy: Eavesdropper Detection Analysis in Quantum Key Distribution Networks Using Qiskit}},
+  institution  = {Dr. Bhimrao Ambedkar University},
+  year         = {2026},
+  month        = nov,
+  publisher    = {Zenodo},
+  doi          = {10.5281/zenodo.24358453},
+  url          = {https://doi.org}
+}
+```
 ## References
 
 1. C. H. Bennett and G. Brassard, "Quantum cryptography: Public key distribution and coin tossing," *Proceedings of the IEEE International Conference on Computers, Systems and Signal Processing*, Bangalore, 1984, pp. 175-179.
