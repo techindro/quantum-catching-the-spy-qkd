@@ -47,8 +47,6 @@ The full paper that describes this work is included in the repository:
 
 The MIT License of this repository covers the code. The text and figures of the paper are not covered by it.
 
-[![DOI](https://zenodo.org)](https://doi.org/10.5281/zenodo.24358453)
-
 ## Background
 
 BB84 is a quantum key distribution protocol published by Charles Bennett and Gilles Brassard in 1984. Two people use it to agree on a secret key, even though the qubits travel over a channel that someone else might be watching.
