@@ -38,7 +38,7 @@ You can try the simulation in the browser, without installing anything, on Huggi
 
 ![Screenshot of the Hugging Face Space: BB84 QKD simulator](figures/hf_space_demo.png)
 
-[![DOI](https://zenodo.org)](https://doi.org/10.5281/zenodo.24358453)
+[![DOI](https://shields.io)](https://doi.org)
 
 ## Paper
 
