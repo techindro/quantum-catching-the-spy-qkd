@@ -38,6 +38,8 @@ You can try the simulation in the browser, without installing anything, on Huggi
 
 ![Screenshot of the Hugging Face Space: BB84 QKD simulator](figures/hf_space_demo.png)
 
+[![DOI](https://zenodo.org)](https://doi.org/10.5281/zenodo.24358453)
+
 ## Paper
 
 The full paper that describes this work is included in the repository:
@@ -45,6 +47,8 @@ The full paper that describes this work is included in the repository:
 **[Catching the Spy: Eavesdropper Detection Analysis in Quantum Key Distribution Networks Using Qiskit](paper/QKD_BB84_Research_Paper.pdf)** (PDF)
 
 The MIT License of this repository covers the code. The text and figures of the paper are not covered by it.
+
+[![DOI](https://zenodo.org)](https://doi.org/10.5281/zenodo.24358453)
 
 ## Background
 
