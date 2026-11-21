@@ -23,7 +23,6 @@ The four entities in the network:
 - [Installation](#installation)
 - [Usage](#usage)
 - [Paper figures: `BB84_paper_figures.ipynb`](#paper-figures)
--[PaperDOI:'https://doi.org/10.5281/zenodo.24358453']
 - [What the simulation does](#what-the-simulation-does)
 - [Expected results](#expected-results)
 - [Limitations](#limitations)
@@ -44,6 +43,8 @@ You can try the simulation in the browser, without installing anything, on Huggi
 The full paper that describes this work is included in the repository:
 
 **[Catching the Spy: Eavesdropper Detection Analysis in Quantum Key Distribution Networks Using Qiskit](paper/QKD_BB84_Research_Paper.pdf)** (PDF)
+
+[![DOI](https://zenodo.org)](https://doi.org/10.5281/zenodo.24358453)
 
 The MIT License of this repository covers the code. The text and figures of the paper are not covered by it.
 
