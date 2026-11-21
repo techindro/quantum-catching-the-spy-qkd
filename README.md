@@ -23,6 +23,7 @@ The four entities in the network:
 - [Installation](#installation)
 - [Usage](#usage)
 - [Paper figures: `BB84_paper_figures.ipynb`](#paper-figures)
+-[Paper DOI:'https://doi.org/10.5281/zenodo.24358453']
 - [What the simulation does](#what-the-simulation-does)
 - [Expected results](#expected-results)
 - [Limitations](#limitations)
